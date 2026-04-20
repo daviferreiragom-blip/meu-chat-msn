@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>MSN · Amigos</title>
     <style>
-        /* === MESMO CSS QUE VOCÊ JÁ USA (mantenha integralmente) === */
+        /* ========== MESMO CSS ANTERIOR (mantenha integralmente) ========== */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: #1e3a5f; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; }
         .app-container { display: flex; flex-direction: column; height: 100%; width: 100%; background: #e9eef3; position: relative; }
@@ -56,14 +56,10 @@
         .file-label { background: #e9edf2; text-align: center; border-radius: 30px; padding: 10px; cursor: pointer; font-size: 13px; font-weight: bold; }
         .info-text { font-size: 11px; color: #5a6e86; text-align: center; margin-top: 6px; }
         .btn-warning { background: #fff0d0; border-color: #e0c48b; color: #a56b1a; }
-        .friends-list { min-height: 100px; display: flex; align-items: center; justify-content: center; color: #7e8c9e; font-style: italic; padding: 20px; background: #fafbfc; border-radius: 12px; }
         .inline-emoticon { height: 2em; width: auto; vertical-align: baseline; display: inline; margin: 0 1px; }
         @media (max-width: 500px) { .modal-panel { width: 100%; max-width: 100%; } .input-area.draw-expanded { min-height: 420px; } }
-        
-        /* Estilos adicionais para o modal de login centralizado */
         #loginModalOverlay { align-items: center; justify-content: center; }
         #loginModalOverlay .modal-panel { height: auto; max-height: 80vh; transform: translateX(0); width: 320px; }
-        .online-user-item { padding: 8px; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 8px; }
     </style>
 </head>
 <body>
@@ -118,7 +114,7 @@
         </div>
     </div>
 
-    <!-- Modal de Login (obrigatório ao entrar) -->
+    <!-- Modal de Login -->
     <div class="modal-overlay" id="loginModalOverlay" style="display: flex;">
         <div class="modal-panel">
             <div class="modal-header">
@@ -135,7 +131,7 @@
         </div>
     </div>
 
-    <!-- Modal padrão (emoticons, novo emoticon, etc) -->
+    <!-- Modal padrão -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-panel" id="modalPanel">
             <div class="modal-header">
@@ -150,7 +146,6 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
     (function(){
-        // ========== CONFIGURAÇÕES ==========
         const socket = io();
         let currentUsername = null;
         let onlineUsers = [];
@@ -162,7 +157,6 @@
             FONT_FAMILY: 'msn_font_family'
         };
 
-        // ========== EMOTICONS ==========
         const createSVGDataUrl = (svg) => 'data:image/svg+xml,' + encodeURIComponent(svg);
         const defaultEmoticons = {
             ':)': { imageUrl: createSVGDataUrl(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#FFD700"/><circle cx="8" cy="9" r="1.5" fill="#2c2c2c"/><circle cx="16" cy="9" r="1.5" fill="#2c2c2c"/><path d="M8 15 Q12 19 16 15" stroke="#2c2c2c" stroke-width="2" fill="none"/></svg>`), nome: 'Sorriso', tipo: 'padrao' },
@@ -189,7 +183,6 @@
         }
         function escapeHtml(s){ return s.replace(/[&<>]/g, m=> m==='&'?'&amp;':m==='<'?'&lt;':m==='>'?'&gt;':''); }
 
-        // ========== EXIBIÇÃO DE MENSAGENS ==========
         function addMessageToUI(msg, isHistory = false) {
             const container = document.getElementById('messagesContainer');
             const div = document.createElement('div');
@@ -205,12 +198,9 @@
             if (!isHistory) container.scrollTop = container.scrollHeight;
         }
 
-        // ========== SOCKET EVENTOS ==========
-        socket.on('connect', () => {
-            console.log('Conectado ao servidor');
-        });
+        // Socket events
+        socket.on('connect', () => console.log('Conectado ao servidor'));
 
-        // Login
         const loginModal = document.getElementById('loginModalOverlay');
         const usernameInput = document.getElementById('usernameInput');
         const loginBtn = document.getElementById('loginBtn');
@@ -232,23 +222,17 @@
             loadEditorContent(); loadToolbarSettings();
         });
 
-        // Histórico
         socket.on('history', (messages) => {
             document.getElementById('messagesContainer').innerHTML = '';
             messages.forEach(msg => addMessageToUI(msg, true));
             document.getElementById('messagesContainer').scrollTop = document.getElementById('messagesContainer').scrollHeight;
         });
 
-        // Mensagens em tempo real
         socket.on('chat message', (msg) => addMessageToUI(msg));
         socket.on('drawing', (msg) => addMessageToUI(msg));
-
-        // Lista de online
         socket.on('online list', (users) => { onlineUsers = users; });
-        socket.on('user joined', (username) => { /* opcional: notificação */ });
-        socket.on('user left', (username) => { /* opcional */ });
 
-        // ========== ENVIO ==========
+        // Envio de mensagens
         function sendMessage() {
             if (!currentUsername) return;
             const editor = document.getElementById('messageInput');
@@ -297,7 +281,7 @@
             ctx.fillStyle='white'; ctx.fillRect(0,0,canvas.width,canvas.height);
         }
 
-        // ========== FUNÇÕES DE APOIO ==========
+        // Helpers
         function saveEditorContent(){ localStorage.setItem(STORAGE_KEYS.EDITOR_CONTENT, document.getElementById('messageInput').innerHTML); }
         function loadEditorContent(){ const s=localStorage.getItem(STORAGE_KEYS.EDITOR_CONTENT); const e=document.getElementById('messageInput'); if(s) e.innerHTML=s; }
         function saveToolbarSettings(){ localStorage.setItem(STORAGE_KEYS.FONT_COLOR, document.getElementById('fontColorPicker').value); localStorage.setItem(STORAGE_KEYS.FONT_FAMILY, document.getElementById('fontFamilySelect').value); }
@@ -306,7 +290,7 @@
         function insertAtCursor(text){ const e=document.getElementById('messageInput'); e.focus(); document.execCommand('insertText',false,text); saveEditorContent(); }
         function clearChat(){ document.getElementById('messagesContainer').innerHTML = ''; }
 
-        // ========== MODAIS ==========
+        // Modais
         const modalOverlay = document.getElementById('modalOverlay');
         const modalTitle = document.getElementById('modalTitle');
         const modalContent = document.getElementById('modalContent');
@@ -340,14 +324,12 @@
             reader.readAsDataURL(file);
         }
         function resetDefaults(){ if(confirm('Restaurar padrões?')){ emoticonMap.clear(); loadDefaults(); saveCustomEmoticons(); renderEmoticonsList(); } }
-
-        // Modal de usuários online
         function showOnlineUsersModal(){
-            const listHtml = onlineUsers.length ? onlineUsers.map(u=>`<div class="online-user-item">👤 ${escapeHtml(u)}</div>`).join('') : '<div style="padding:10px;">Nenhum usuário online</div>';
+            const listHtml = onlineUsers.length ? onlineUsers.map(u=>`<div style="padding:8px;border-bottom:1px solid #ddd;">👤 ${escapeHtml(u)}</div>`).join('') : '<div style="padding:10px;">Nenhum usuário online</div>';
             openModal('👥 Usuários online', `<div class="panel-section">${listHtml}</div>`);
         }
 
-        // ========== INICIALIZAÇÃO ==========
+        // Inicialização
         document.addEventListener('DOMContentLoaded', ()=>{
             loadDefaults(); loadCustomEmoticons();
             const editor=document.getElementById('messageInput');

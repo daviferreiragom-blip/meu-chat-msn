@@ -147,6 +147,7 @@
 <script>
     (function(){
         const socket = io();
+        window.socket = socket;
         let currentUsername = null;
         let onlineUsers = [];
 

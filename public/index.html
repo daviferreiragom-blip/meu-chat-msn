@@ -5,463 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>MSN · Amigos</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            background: #1e3a5f;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .app-container {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            width: 100%;
-            background: #e9eef3;
-            position: relative;
-        }
-
-        .chat-header {
-            background: #d9e2ef;
-            padding: 8px 12px;
-            font-weight: bold;
-            font-size: 14px;
-            border-bottom: 1px solid #b8c7dc;
-            color: #1f4973;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-shrink: 0;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .status-away {
-            font-size: 11px;
-            background: #e6eef9;
-            padding: 3px 8px;
-            border-radius: 20px;
-            color: #b45f06;
-        }
-
-        .icon-btn {
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            padding: 6px 8px;
-            border-radius: 20px;
-            color: #1f4973;
-            transition: background 0.2s;
-            line-height: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .icon-btn:hover {
-            background: rgba(0,0,0,0.05);
-        }
-
-        .messages-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 12px;
-            background: #ffffffea;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .message-item {
-            font-size: 13px;
-            line-height: 1.4;
-            word-break: break-word;
-            color: #000;
-        }
-
-        .message-item strong {
-            color: #2e6bb0;
-            margin-right: 4px;
-        }
-
-        .message-item .time {
-            font-size: 10px;
-            color: #7e8c9e;
-            margin-left: 6px;
-        }
-
-        .drawing-image {
-            max-width: 100%;
-            max-height: 120px;
-            margin-top: 4px;
-            display: block;
-            border-radius: 6px;
-        }
-
-        /* Área de input */
-        .input-area {
-            background: #f9fafc;
-            border-top: 2px solid #b8c7dc;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            flex-shrink: 0;
-            transition: height 0.2s ease;
-        }
-
-        .input-area.draw-expanded {
-            height: 70vh;
-            min-height: 480px;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 2px;
-            border-bottom: 1px solid #b8c7dc;
-        }
-        .tab-btn {
-            background: #e1e8f0;
-            border: none;
-            border-radius: 12px 12px 0 0;
-            padding: 10px 8px;
-            font-weight: bold;
-            color: #1f3f60;
-            cursor: pointer;
-            font-size: 14px;
-            flex: 1;
-            text-align: center;
-        }
-        .tab-btn.active {
-            background: white;
-            border-bottom: 2px solid #2e6bb0;
-            color: #0a4c8a;
-        }
-        .tab-content {
-            display: none;
-            padding: 6px 0;
-            flex: 1;
-            overflow: visible;
-            height: 100%;
-        }
-        .tab-content.active {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        /* Área de texto */
-        .format-toolbar {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            align-items: center;
-            background: #e9edf2;
-            padding: 6px 8px;
-            border-radius: 24px;
-            border: 1px solid #cbdae5;
-        }
-        .format-btn {
-            background: white;
-            border: 1px solid #b0c0d0;
-            border-radius: 10px;
-            padding: 6px 10px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 14px;
-            color: #1f3f60;
-            min-width: 36px;
-            text-align: center;
-        }
-        #fontColorPicker {
-            width: 38px;
-            height: 38px;
-            border: 1px solid #b0c0d0;
-            border-radius: 10px;
-            cursor: pointer;
-            background: white;
-            padding: 2px;
-        }
-        #fontFamilySelect {
-            padding: 6px 8px;
-            border-radius: 20px;
-            border: 1px solid #b0c0d0;
-            background: white;
-            font-size: 13px;
-            height: 38px;
-        }
-
-        .message-input {
-            width: 100%;
-            min-height: 90px;
-            padding: 12px;
-            border: 1px solid #b8c7dc;
-            border-radius: 12px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 14px;
-            outline: none;
-            background: white;
-            overflow-y: auto;
-            line-height: 1.4;
-        }
-
-        .message-input[data-placeholder]:empty:before {
-            content: attr(data-placeholder);
-            color: #8a9cb0;
-            font-style: italic;
-        }
-
-        /* Área de desenho – estrutura corrigida */
-        .draw-tools {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            align-items: center;
-            flex-shrink: 0;
-        }
-        #drawColor {
-            width: 40px;
-            height: 36px;
-            border-radius: 8px;
-        }
-        #brushSize {
-            width: 80px;
-        }
-
-        .canvas-wrapper {
-            flex: 1 1 auto;
-            min-height: 200px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            width: 100%;
-            background: transparent;
-            border-radius: 10px;
-        }
-
-        canvas {
-            background: white;
-            border: 2px solid #b8c7dc;
-            border-radius: 10px;
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="6" cy="18" r="4" fill="black" opacity="0.7"/><path d="M10 14 L18 6 L22 10 L14 18 Z" fill="black" opacity="0.8"/></svg>') 6 18, crosshair;
-            width: 100%;
-            height: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            background-image: radial-gradient(circle, #ccc 1px, transparent 1px);
-            background-size: 20px 20px;
-            touch-action: none;
-            display: block;
-        }
-
-        button {
-            background: #e1e8f0;
-            border: 1px solid #a0b3cc;
-            border-radius: 24px;
-            padding: 8px 14px;
-            font-weight: bold;
-            color: #1f3f60;
-            cursor: pointer;
-            font-size: 13px;
-            min-height: 38px;
-            transition: 0.1s;
-        }
-
-        /* Modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.3);
-            z-index: 1000;
-            display: none;
-            align-items: flex-start;
-            justify-content: flex-end;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal-panel {
-            width: 300px;
-            max-width: 85vw;
-            height: 100%;
-            background: #f5f7fb;
-            box-shadow: -2px 0 10px rgba(0,0,0,0.2);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            transform: translateX(100%);
-            transition: transform 0.2s ease;
-        }
-
-        .modal-overlay.active .modal-panel {
-            transform: translateX(0);
-        }
-
-        .modal-header {
-            background: #d9e2ef;
-            padding: 12px;
-            font-weight: bold;
-            color: #1f4973;
-            border-bottom: 1px solid #b8c7dc;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            color: #1f4973;
-        }
-
-        .modal-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 12px;
-        }
-
-        .panel-section {
-            background: white;
-            border-radius: 14px;
-            padding: 12px;
-            border: 1px solid #ccd8e8;
-            margin-bottom: 12px;
-        }
-
-        .emoticons-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-            gap: 8px;
-            margin-bottom: 8px;
-            max-height: 50vh;
-            overflow-y: auto;
-        }
-        .emoticon-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background: #f0f4fa;
-            padding: 6px 2px;
-            border-radius: 12px;
-            cursor: pointer;
-            border: 1px solid #d2deed;
-        }
-        .emoticon-img-preview {
-            width: 32px;
-            height: 32px;
-            object-fit: contain;
-        }
-        .emoticon-shortcut {
-            font-size: 11px;
-            background: #e9eef5;
-            padding: 3px 5px;
-            border-radius: 16px;
-            margin-top: 4px;
-            font-family: monospace;
-            word-break: break-all;
-            text-align: center;
-        }
-
-        .add-emoticon {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .add-emoticon input {
-            padding: 10px;
-            border: 1px solid #b8c7dc;
-            border-radius: 20px;
-            font-size: 13px;
-            background: white;
-        }
-        .file-label {
-            background: #e9edf2;
-            text-align: center;
-            border-radius: 30px;
-            padding: 10px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: bold;
-        }
-        .info-text {
-            font-size: 11px;
-            color: #5a6e86;
-            text-align: center;
-            margin-top: 6px;
-        }
-        .btn-warning {
-            background: #fff0d0;
-            border-color: #e0c48b;
-            color: #a56b1a;
-        }
-        .friends-list {
-            min-height: 100px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #7e8c9e;
-            font-style: italic;
-            padding: 20px;
-            background: #fafbfc;
-            border-radius: 12px;
-        }
-        .inline-emoticon {
-            height: 2em;
-            width: auto;
-            vertical-align: baseline;
-            display: inline;
-            margin: 0 1px;
-        }
-
-        @media (max-width: 500px) {
-            .modal-panel {
-                width: 100%;
-                max-width: 100%;
-            }
-            .input-area.draw-expanded {
-                min-height: 420px;
-            }
-        }
+        /* === MESMO CSS QUE VOCÊ JÁ USA (mantenha integralmente) === */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #1e3a5f; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; height: 100vh; width: 100vw; overflow: hidden; display: flex; flex-direction: column; }
+        .app-container { display: flex; flex-direction: column; height: 100%; width: 100%; background: #e9eef3; position: relative; }
+        .chat-header { background: #d9e2ef; padding: 8px 12px; font-weight: bold; font-size: 14px; border-bottom: 1px solid #b8c7dc; color: #1f4973; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+        .header-left { display: flex; align-items: center; gap: 8px; }
+        .header-right { display: flex; align-items: center; gap: 6px; }
+        .status-away { font-size: 11px; background: #e6eef9; padding: 3px 8px; border-radius: 20px; color: #b45f06; }
+        .icon-btn { background: none; border: none; font-size: 20px; cursor: pointer; padding: 6px 8px; border-radius: 20px; color: #1f4973; transition: background 0.2s; line-height: 1; display: flex; align-items: center; justify-content: center; }
+        .icon-btn:hover { background: rgba(0,0,0,0.05); }
+        .messages-container { flex: 1; overflow-y: auto; padding: 12px; background: #ffffffea; display: flex; flex-direction: column; gap: 8px; }
+        .message-item { font-size: 13px; line-height: 1.4; word-break: break-word; color: #000; }
+        .message-item strong { color: #2e6bb0; margin-right: 4px; }
+        .message-item .time { font-size: 10px; color: #7e8c9e; margin-left: 6px; }
+        .drawing-image { max-width: 100%; max-height: 120px; margin-top: 4px; display: block; border-radius: 6px; }
+        .input-area { background: #f9fafc; border-top: 2px solid #b8c7dc; padding: 12px; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; transition: height 0.2s ease; }
+        .input-area.draw-expanded { height: 70vh; min-height: 480px; }
+        .tabs { display: flex; gap: 2px; border-bottom: 1px solid #b8c7dc; }
+        .tab-btn { background: #e1e8f0; border: none; border-radius: 12px 12px 0 0; padding: 10px 8px; font-weight: bold; color: #1f3f60; cursor: pointer; font-size: 14px; flex: 1; text-align: center; }
+        .tab-btn.active { background: white; border-bottom: 2px solid #2e6bb0; color: #0a4c8a; }
+        .tab-content { display: none; padding: 6px 0; flex: 1; overflow: visible; height: 100%; }
+        .tab-content.active { display: flex; flex-direction: column; gap: 12px; }
+        .format-toolbar { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; background: #e9edf2; padding: 6px 8px; border-radius: 24px; border: 1px solid #cbdae5; }
+        .format-btn { background: white; border: 1px solid #b0c0d0; border-radius: 10px; padding: 6px 10px; font-weight: bold; cursor: pointer; font-size: 14px; color: #1f3f60; min-width: 36px; text-align: center; }
+        #fontColorPicker { width: 38px; height: 38px; border: 1px solid #b0c0d0; border-radius: 10px; cursor: pointer; background: white; padding: 2px; }
+        #fontFamilySelect { padding: 6px 8px; border-radius: 20px; border: 1px solid #b0c0d0; background: white; font-size: 13px; height: 38px; }
+        .message-input { width: 100%; min-height: 90px; padding: 12px; border: 1px solid #b8c7dc; border-radius: 12px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 14px; outline: none; background: white; overflow-y: auto; line-height: 1.4; }
+        .message-input[data-placeholder]:empty:before { content: attr(data-placeholder); color: #8a9cb0; font-style: italic; }
+        .draw-tools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
+        #drawColor { width: 40px; height: 36px; border-radius: 8px; }
+        #brushSize { width: 80px; }
+        .canvas-wrapper { flex: 1 1 auto; min-height: 200px; display: flex; flex-direction: column; justify-content: center; width: 100%; background: transparent; border-radius: 10px; }
+        canvas { background: white; border: 2px solid #b8c7dc; border-radius: 10px; cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="6" cy="18" r="4" fill="black" opacity="0.7"/><path d="M10 14 L18 6 L22 10 L14 18 Z" fill="black" opacity="0.8"/></svg>') 6 18, crosshair; width: 100%; height: 100%; max-height: 100%; object-fit: contain; background-image: radial-gradient(circle, #ccc 1px, transparent 1px); background-size: 20px 20px; touch-action: none; display: block; }
+        button { background: #e1e8f0; border: 1px solid #a0b3cc; border-radius: 24px; padding: 8px 14px; font-weight: bold; color: #1f3f60; cursor: pointer; font-size: 13px; min-height: 38px; transition: 0.1s; }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 1000; display: none; align-items: flex-start; justify-content: flex-end; }
+        .modal-overlay.active { display: flex; }
+        .modal-panel { width: 300px; max-width: 85vw; height: 100%; background: #f5f7fb; box-shadow: -2px 0 10px rgba(0,0,0,0.2); display: flex; flex-direction: column; overflow: hidden; transform: translateX(100%); transition: transform 0.2s ease; }
+        .modal-overlay.active .modal-panel { transform: translateX(0); }
+        .modal-header { background: #d9e2ef; padding: 12px; font-weight: bold; color: #1f4973; border-bottom: 1px solid #b8c7dc; display: flex; justify-content: space-between; align-items: center; }
+        .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: #1f4973; }
+        .modal-content { flex: 1; overflow-y: auto; padding: 12px; }
+        .panel-section { background: white; border-radius: 14px; padding: 12px; border: 1px solid #ccd8e8; margin-bottom: 12px; }
+        .emoticons-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 8px; margin-bottom: 8px; max-height: 50vh; overflow-y: auto; }
+        .emoticon-item { display: flex; flex-direction: column; align-items: center; background: #f0f4fa; padding: 6px 2px; border-radius: 12px; cursor: pointer; border: 1px solid #d2deed; }
+        .emoticon-img-preview { width: 32px; height: 32px; object-fit: contain; }
+        .emoticon-shortcut { font-size: 11px; background: #e9eef5; padding: 3px 5px; border-radius: 16px; margin-top: 4px; font-family: monospace; word-break: break-all; text-align: center; }
+        .add-emoticon { display: flex; flex-direction: column; gap: 10px; }
+        .add-emoticon input { padding: 10px; border: 1px solid #b8c7dc; border-radius: 20px; font-size: 13px; background: white; }
+        .file-label { background: #e9edf2; text-align: center; border-radius: 30px; padding: 10px; cursor: pointer; font-size: 13px; font-weight: bold; }
+        .info-text { font-size: 11px; color: #5a6e86; text-align: center; margin-top: 6px; }
+        .btn-warning { background: #fff0d0; border-color: #e0c48b; color: #a56b1a; }
+        .friends-list { min-height: 100px; display: flex; align-items: center; justify-content: center; color: #7e8c9e; font-style: italic; padding: 20px; background: #fafbfc; border-radius: 12px; }
+        .inline-emoticon { height: 2em; width: auto; vertical-align: baseline; display: inline; margin: 0 1px; }
+        @media (max-width: 500px) { .modal-panel { width: 100%; max-width: 100%; } .input-area.draw-expanded { min-height: 420px; } }
+        
+        /* Estilos adicionais para o modal de login centralizado */
+        #loginModalOverlay { align-items: center; justify-content: center; }
+        #loginModalOverlay .modal-panel { height: auto; max-height: 80vh; transform: translateX(0); width: 320px; }
+        .online-user-item { padding: 8px; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 8px; }
     </style>
 </head>
 <body>
 <div class="app-container">
     <div class="chat-header">
         <div class="header-left">
-            <span>📨 David · Online</span>
-            <span class="status-away">⚡ Away</span>
+            <span id="headerTitle">📨 MSN · Chat</span>
+            <span class="status-away" id="userStatus">⚡ Conectando...</span>
         </div>
         <div class="header-right">
+            <button class="icon-btn" id="showOnlineBtn" title="Usuários online">👥</button>
             <button class="icon-btn" id="showEmoticonsBtn" title="Emoticons">😊</button>
             <button class="icon-btn" id="showNewEmoticonBtn" title="Novo Emoticon">➕</button>
-            <button class="icon-btn" id="showFriendsBtn" title="Amigos">👥</button>
             <button class="icon-btn" id="clearChatHeaderBtn" title="Limpar conversa">🗑️</button>
         </div>
     </div>
@@ -503,6 +118,24 @@
         </div>
     </div>
 
+    <!-- Modal de Login (obrigatório ao entrar) -->
+    <div class="modal-overlay" id="loginModalOverlay" style="display: flex;">
+        <div class="modal-panel">
+            <div class="modal-header">
+                <span>👤 Escolha seu nome</span>
+                <span></span>
+            </div>
+            <div class="modal-content">
+                <div class="panel-section">
+                    <input type="text" id="usernameInput" placeholder="Seu nome" maxlength="20" style="width:100%; padding:12px; border-radius:20px; border:1px solid #b8c7dc; margin-bottom:12px;">
+                    <div id="loginError" style="color:#c00; font-size:12px; margin-bottom:8px;"></div>
+                    <button id="loginBtn" style="width:100%;">Entrar no chat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal padrão (emoticons, novo emoticon, etc) -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-panel" id="modalPanel">
             <div class="modal-header">
@@ -514,12 +147,13 @@
     </div>
 </div>
 
-<!-- Socket.IO e script adaptado -->
 <script src="/socket.io/socket.io.js"></script>
 <script>
     (function(){
-        // Conexão com o servidor WebSocket
+        // ========== CONFIGURAÇÕES ==========
         const socket = io();
+        let currentUsername = null;
+        let onlineUsers = [];
 
         const STORAGE_KEYS = {
             EMOTICONS: 'msn_emoticons_custom',
@@ -528,6 +162,7 @@
             FONT_FAMILY: 'msn_font_family'
         };
 
+        // ========== EMOTICONS ==========
         const createSVGDataUrl = (svg) => 'data:image/svg+xml,' + encodeURIComponent(svg);
         const defaultEmoticons = {
             ':)': { imageUrl: createSVGDataUrl(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#FFD700"/><circle cx="8" cy="9" r="1.5" fill="#2c2c2c"/><circle cx="16" cy="9" r="1.5" fill="#2c2c2c"/><path d="M8 15 Q12 19 16 15" stroke="#2c2c2c" stroke-width="2" fill="none"/></svg>`), nome: 'Sorriso', tipo: 'padrao' },
@@ -536,391 +171,212 @@
             ':D': { imageUrl: createSVGDataUrl(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#FFD700"/><circle cx="8" cy="9" r="1.5" fill="#2c2c2c"/><circle cx="16" cy="9" r="1.5" fill="#2c2c2c"/><path d="M6 14 Q12 21 18 14" stroke="#2c2c2c" stroke-width="2" fill="none"/><path d="M9 13 L11 14 L9 15" stroke="#2c2c2c" fill="none"/><path d="M15 13 L17 14 L15 15" stroke="#2c2c2c" fill="none"/></svg>`), nome: 'Gargalhada', tipo: 'padrao' },
             ':O': { imageUrl: createSVGDataUrl(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#FFD700"/><circle cx="8" cy="9" r="1.5" fill="#2c2c2c"/><circle cx="16" cy="9" r="1.5" fill="#2c2c2c"/><ellipse cx="12" cy="15" rx="2.5" ry="3" fill="#2c2c2c"/></svg>`), nome: 'Surpreso', tipo: 'padrao' }
         };
-
         let emoticonMap = new Map();
-
-        function loadDefaults() {
-            for (const [key, val] of Object.entries(defaultEmoticons)) emoticonMap.set(key, { ...val });
-        }
-
+        function loadDefaults() { for (let [k,v] of Object.entries(defaultEmoticons)) emoticonMap.set(k, {...v}); }
         function saveCustomEmoticons() {
-            const custom = Array.from(emoticonMap.entries())
-                .filter(([_, data]) => data.tipo === 'custom')
-                .map(([shortcut, data]) => ({ shortcut, imageUrl: data.imageUrl, nome: data.nome }));
+            const custom = Array.from(emoticonMap.entries()).filter(([_,d])=>d.tipo==='custom').map(([s,d])=>({shortcut:s, imageUrl:d.imageUrl, nome:d.nome}));
             localStorage.setItem(STORAGE_KEYS.EMOTICONS, JSON.stringify(custom));
         }
-
         function loadCustomEmoticons() {
             const saved = localStorage.getItem(STORAGE_KEYS.EMOTICONS);
-            if (saved) {
-                try {
-                    const customList = JSON.parse(saved);
-                    for (let item of customList) {
-                        emoticonMap.set(item.shortcut, { imageUrl: item.imageUrl, nome: item.nome, tipo: 'custom' });
-                    }
-                } catch(e) {}
-            }
+            if(saved) try{ JSON.parse(saved).forEach(i=> emoticonMap.set(i.shortcut, {imageUrl:i.imageUrl, nome:i.nome, tipo:'custom'})); }catch(e){}
         }
-
-        function replaceAllShortcutsInHtml(htmlContent) {
-            if (emoticonMap.size === 0) return htmlContent;
-            const shortcuts = Array.from(emoticonMap.keys()).sort((a, b) => b.length - a.length);
-            const escapedShortcuts = shortcuts.map(s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-            const regex = new RegExp(`(${escapedShortcuts.join('|')})`, 'g');
-            return htmlContent.replace(regex, (match) => {
-                const data = emoticonMap.get(match);
-                if (data) return `<img src="${data.imageUrl}" class="inline-emoticon" alt="${escapeHtml(match)}">`;
-                return match;
-            });
+        function replaceAllShortcutsInHtml(html) {
+            if(emoticonMap.size===0) return html;
+            const shortcuts = Array.from(emoticonMap.keys()).sort((a,b)=>b.length-a.length);
+            const regex = new RegExp(`(${shortcuts.map(s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')})`,'g');
+            return html.replace(regex, m=>{ const d=emoticonMap.get(m); return d?`<img src="${d.imageUrl}" class="inline-emoticon" alt="${escapeHtml(m)}">`:m; });
         }
+        function escapeHtml(s){ return s.replace(/[&<>]/g, m=> m==='&'?'&amp;':m==='<'?'&lt;':m==='>'?'&gt;':''); }
 
-        function processMessageForDisplay(htmlContent) {
-            return replaceAllShortcutsInHtml(htmlContent);
-        }
-
-        function escapeHtml(str) {
-            return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
-        }
-
-        function addUserMessage(htmlContent, sender = 'Você', isDrawing = false, drawingURL = null) {
+        // ========== EXIBIÇÃO DE MENSAGENS ==========
+        function addMessageToUI(msg, isHistory = false) {
             const container = document.getElementById('messagesContainer');
             const div = document.createElement('div');
             div.className = 'message-item';
-            const time = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
-            if (isDrawing && drawingURL) {
-                div.innerHTML = `<strong>${escapeHtml(sender)}</strong> enviou um desenho:<br><img src="${drawingURL}" class="drawing-image" alt="desenho"> <span class="time">${time}</span>`;
+            const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+            const senderDisplay = (msg.sender === currentUsername) ? 'Você' : msg.sender;
+            if (msg.type === 'drawing') {
+                div.innerHTML = `<strong>${escapeHtml(senderDisplay)}</strong> enviou um desenho:<br><img src="${msg.imageUrl}" class="drawing-image" alt="desenho"> <span class="time">${time}</span>`;
             } else {
-                div.innerHTML = `<strong>${escapeHtml(sender)}</strong> ${processMessageForDisplay(htmlContent)} <span class="time">${time}</span>`;
+                div.innerHTML = `<strong>${escapeHtml(senderDisplay)}</strong> ${replaceAllShortcutsInHtml(msg.content)} <span class="time">${time}</span>`;
             }
             container.appendChild(div);
-            container.scrollTop = container.scrollHeight;
+            if (!isHistory) container.scrollTop = container.scrollHeight;
         }
 
-        function addWelcomeMessage() {
-            const container = document.getElementById('messagesContainer');
-            if (container.children.length === 0) {
-                const div = document.createElement('div');
-                div.className = 'message-item';
-                div.style.color = '#3a6ea5';
-                div.innerHTML = `✨ Bem-vindo ao MSN Messenger! Use os emoticons ou desenhe à vontade.`;
-                container.appendChild(div);
-            }
-        }
+        // ========== SOCKET EVENTOS ==========
+        socket.on('connect', () => {
+            console.log('Conectado ao servidor');
+        });
 
-        // ---------- Funções modificadas para Socket.IO ----------
+        // Login
+        const loginModal = document.getElementById('loginModalOverlay');
+        const usernameInput = document.getElementById('usernameInput');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginError = document.getElementById('loginError');
+
+        loginBtn.addEventListener('click', () => {
+            const name = usernameInput.value.trim();
+            if (!name) { loginError.textContent = 'Digite um nome'; return; }
+            socket.emit('set username', name);
+        });
+        usernameInput.addEventListener('keypress', (e) => { if(e.key==='Enter') loginBtn.click(); });
+
+        socket.on('username error', (msg) => { loginError.textContent = msg; });
+        socket.on('username accepted', (name) => {
+            currentUsername = name;
+            loginModal.style.display = 'none';
+            document.getElementById('headerTitle').innerHTML = `📨 ${name} · Online`;
+            document.getElementById('userStatus').textContent = '⚡ Online';
+            loadEditorContent(); loadToolbarSettings();
+        });
+
+        // Histórico
+        socket.on('history', (messages) => {
+            document.getElementById('messagesContainer').innerHTML = '';
+            messages.forEach(msg => addMessageToUI(msg, true));
+            document.getElementById('messagesContainer').scrollTop = document.getElementById('messagesContainer').scrollHeight;
+        });
+
+        // Mensagens em tempo real
+        socket.on('chat message', (msg) => addMessageToUI(msg));
+        socket.on('drawing', (msg) => addMessageToUI(msg));
+
+        // Lista de online
+        socket.on('online list', (users) => { onlineUsers = users; });
+        socket.on('user joined', (username) => { /* opcional: notificação */ });
+        socket.on('user left', (username) => { /* opcional */ });
+
+        // ========== ENVIO ==========
         function sendMessage() {
+            if (!currentUsername) return;
             const editor = document.getElementById('messageInput');
             let html = editor.innerHTML;
             if (!html.trim() || html === '<br>') return;
-
-            // Emite a mensagem para o servidor
-            socket.emit('chat message', {
-                sender: 'Você',
-                content: html
-            });
-
-            // Exibe localmente (como "Você")
-            addUserMessage(html, 'Você');
+            socket.emit('chat message', { content: html });
             editor.innerHTML = '';
             saveEditorContent();
         }
 
-        function sendDrawing() {
-            const dataURL = canvas.toDataURL('image/png');
-            
-            socket.emit('drawing', {
-                sender: 'Você',
-                imageUrl: dataURL
-            });
-
-            addUserMessage('', 'Você', true, dataURL);
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-
-        // Ouvintes para mensagens recebidas
-        socket.on('chat message', (data) => {
-            // Para não duplicar a própria mensagem (o servidor envia para todos, inclusive o remetente)
-            // Verificamos se o remetente não é "Você" (ou poderíamos usar o socket.id)
-            if (data.sender !== 'Você') {
-                addUserMessage(data.content, 'Amigo');
-            }
-        });
-
-        socket.on('drawing', (data) => {
-            if (data.sender !== 'Você') {
-                addUserMessage('', 'Amigo', true, data.imageUrl);
-            }
-        });
-        // -------------------------------------------------------
-
-        function saveEditorContent() {
-            localStorage.setItem(STORAGE_KEYS.EDITOR_CONTENT, document.getElementById('messageInput').innerHTML);
-        }
-        function loadEditorContent() {
-            const saved = localStorage.getItem(STORAGE_KEYS.EDITOR_CONTENT);
-            const editor = document.getElementById('messageInput');
-            if (saved) editor.innerHTML = saved;
-            if (!editor.innerHTML.trim() || editor.innerHTML === '<br>') editor.innerHTML = '';
-        }
-
-        function saveToolbarSettings() {
-            localStorage.setItem(STORAGE_KEYS.FONT_COLOR, document.getElementById('fontColorPicker').value);
-            localStorage.setItem(STORAGE_KEYS.FONT_FAMILY, document.getElementById('fontFamilySelect').value);
-        }
-        function loadToolbarSettings() {
-            const savedColor = localStorage.getItem(STORAGE_KEYS.FONT_COLOR);
-            const savedFamily = localStorage.getItem(STORAGE_KEYS.FONT_FAMILY);
-            if (savedColor) document.getElementById('fontColorPicker').value = savedColor;
-            if (savedFamily) document.getElementById('fontFamilySelect').value = savedFamily;
-        }
-
-        function applyFormat(cmd, value = null) {
-            document.execCommand(cmd, false, value);
-            document.getElementById('messageInput').focus();
-            saveEditorContent();
-        }
-        function insertAtCursor(text) {
-            const editor = document.getElementById('messageInput');
-            editor.focus();
-            document.execCommand('insertText', false, text);
-            saveEditorContent();
-        }
-
+        // Desenho
         const canvas = document.getElementById('drawCanvas');
         const ctx = canvas.getContext('2d');
-        let drawing = false, lastX = 0, lastY = 0;
-
+        let drawing = false, lastX=0, lastY=0;
         function resizeCanvas() {
             const wrapper = canvas.parentElement;
-            const maxWidth = wrapper.clientWidth - 4;
-            const maxHeight = wrapper.clientHeight - 4;
-            const size = Math.min(maxWidth, maxHeight);
-            
+            const size = Math.min(wrapper.clientWidth-4, wrapper.clientHeight-4);
             const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = size;
-            tempCanvas.height = size;
+            tempCanvas.width = size; tempCanvas.height = size;
             const tempCtx = tempCanvas.getContext('2d');
-            tempCtx.fillStyle = 'white';
-            tempCtx.fillRect(0, 0, size, size);
-            
-            if (canvas.width > 0 && canvas.height > 0) {
-                tempCtx.drawImage(canvas, 0, 0, size, size);
-            }
-            
-            canvas.width = size;
-            canvas.height = size;
-            ctx.drawImage(tempCanvas, 0, 0);
+            tempCtx.fillStyle='white'; tempCtx.fillRect(0,0,size,size);
+            if(canvas.width>0 && canvas.height>0) tempCtx.drawImage(canvas,0,0,size,size);
+            canvas.width=size; canvas.height=size;
+            ctx.drawImage(tempCanvas,0,0);
         }
-        
-        window.addEventListener('resize', () => {
-            if (document.getElementById('tab-draw').classList.contains('active')) {
-                resizeCanvas();
-            }
-        });
-
-        function getCoords(e) {
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            let cx, cy;
-            if (e.touches) { cx = e.touches[0].clientX; cy = e.touches[0].clientY; }
-            else { cx = e.clientX; cy = e.clientY; }
-            let x = (cx - rect.left) * scaleX;
-            let y = (cy - rect.top) * scaleY;
-            return { x: Math.min(Math.max(0, x), canvas.width), y: Math.min(Math.max(0, y), canvas.height) };
+        window.addEventListener('resize', ()=>{ if(document.getElementById('tab-draw').classList.contains('active')) resizeCanvas(); });
+        function getCoords(e){
+            const rect=canvas.getBoundingClientRect();
+            const scaleX=canvas.width/rect.width, scaleY=canvas.height/rect.height;
+            let cx,cy;
+            if(e.touches){ cx=e.touches[0].clientX; cy=e.touches[0].clientY; }
+            else { cx=e.clientX; cy=e.clientY; }
+            let x=(cx-rect.left)*scaleX, y=(cy-rect.top)*scaleY;
+            return {x:Math.min(Math.max(0,x),canvas.width), y:Math.min(Math.max(0,y),canvas.height)};
         }
-        function start(e) { drawing = true; const { x, y } = getCoords(e); lastX = x; lastY = y; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x+0.5, y+0.5); ctx.stroke(); e.preventDefault(); }
-        function draw(e) { if (!drawing) return; const { x, y } = getCoords(e); ctx.strokeStyle = document.getElementById('drawColor').value; ctx.lineWidth = document.getElementById('brushSize').value; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke(); lastX = x; lastY = y; e.preventDefault(); }
-        function stop() { drawing = false; }
-
-        canvas.addEventListener('mousedown', start);
-        canvas.addEventListener('mousemove', draw);
-        canvas.addEventListener('mouseup', stop);
-        canvas.addEventListener('mouseleave', stop);
-        canvas.addEventListener('touchstart', start, {passive: false});
-        canvas.addEventListener('touchmove', draw, {passive: false});
-        canvas.addEventListener('touchend', stop);
-
-        document.getElementById('clearCanvasBtn').addEventListener('click', () => {
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        });
-
-        function deleteEmoticon(shortcut) {
-            if (!emoticonMap.has(shortcut)) return;
-            if (emoticonMap.get(shortcut).tipo === 'padrao') { alert('Emoticons padrão não podem ser excluídos.'); return; }
-            if (confirm(`Excluir emoticon "${shortcut}"?`)) { emoticonMap.delete(shortcut); saveCustomEmoticons(); renderEmoticonsList(); }
+        function start(e){ drawing=true; const {x,y}=getCoords(e); lastX=x; lastY=y; ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x+0.5,y+0.5); ctx.stroke(); e.preventDefault(); }
+        function draw(e){ if(!drawing) return; const {x,y}=getCoords(e); ctx.strokeStyle=document.getElementById('drawColor').value; ctx.lineWidth=document.getElementById('brushSize').value; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(x,y); ctx.stroke(); lastX=x; lastY=y; e.preventDefault(); }
+        function stop(){ drawing=false; }
+        canvas.addEventListener('mousedown',start); canvas.addEventListener('mousemove',draw); canvas.addEventListener('mouseup',stop); canvas.addEventListener('mouseleave',stop);
+        canvas.addEventListener('touchstart',start,{passive:false}); canvas.addEventListener('touchmove',draw,{passive:false}); canvas.addEventListener('touchend',stop);
+        document.getElementById('clearCanvasBtn').addEventListener('click',()=>{ctx.fillStyle='white';ctx.fillRect(0,0,canvas.width,canvas.height);});
+        function sendDrawing(){
+            if(!currentUsername) return;
+            const dataURL = canvas.toDataURL('image/png');
+            socket.emit('drawing', { imageUrl: dataURL });
+            ctx.fillStyle='white'; ctx.fillRect(0,0,canvas.width,canvas.height);
         }
 
-        function attachDeleteEvents(el, shortcut) {
-            el.addEventListener('contextmenu', (e) => { e.preventDefault(); deleteEmoticon(shortcut); });
-            let timer;
-            el.addEventListener('touchstart', () => { timer = setTimeout(() => deleteEmoticon(shortcut), 600); });
-            el.addEventListener('touchend', () => { clearTimeout(timer); });
-            el.addEventListener('touchmove', () => { clearTimeout(timer); });
-            let mouseTimer;
-            el.addEventListener('mousedown', (e) => { if(e.button===0) { mouseTimer = setTimeout(() => deleteEmoticon(shortcut), 600); } });
-            el.addEventListener('mouseup', () => { clearTimeout(mouseTimer); });
-            el.addEventListener('mouseleave', () => { clearTimeout(mouseTimer); });
-        }
+        // ========== FUNÇÕES DE APOIO ==========
+        function saveEditorContent(){ localStorage.setItem(STORAGE_KEYS.EDITOR_CONTENT, document.getElementById('messageInput').innerHTML); }
+        function loadEditorContent(){ const s=localStorage.getItem(STORAGE_KEYS.EDITOR_CONTENT); const e=document.getElementById('messageInput'); if(s) e.innerHTML=s; }
+        function saveToolbarSettings(){ localStorage.setItem(STORAGE_KEYS.FONT_COLOR, document.getElementById('fontColorPicker').value); localStorage.setItem(STORAGE_KEYS.FONT_FAMILY, document.getElementById('fontFamilySelect').value); }
+        function loadToolbarSettings(){ const c=localStorage.getItem(STORAGE_KEYS.FONT_COLOR); const f=localStorage.getItem(STORAGE_KEYS.FONT_FAMILY); if(c) document.getElementById('fontColorPicker').value=c; if(f) document.getElementById('fontFamilySelect').value=f; }
+        function applyFormat(cmd,val=null){ document.execCommand(cmd,false,val); document.getElementById('messageInput').focus(); saveEditorContent(); }
+        function insertAtCursor(text){ const e=document.getElementById('messageInput'); e.focus(); document.execCommand('insertText',false,text); saveEditorContent(); }
+        function clearChat(){ document.getElementById('messagesContainer').innerHTML = ''; }
 
-        function renderEmoticonsList() {
-            const container = document.getElementById('emoticonsList');
-            if (!container) return;
-            container.innerHTML = '';
-            if (emoticonMap.size === 0) { container.innerHTML = '<div style="padding:10px;color:#888;grid-column:1/-1;">Nenhum</div>'; return; }
-            for (let [shortcut, data] of emoticonMap.entries()) {
-                const div = document.createElement('div'); div.className = 'emoticon-item';
-                const img = document.createElement('img'); img.src = data.imageUrl; img.className = 'emoticon-img-preview';
-                const span = document.createElement('span'); span.className = 'emoticon-shortcut'; span.innerText = shortcut;
-                div.appendChild(img); div.appendChild(span);
-                div.addEventListener('click', () => { insertAtCursor(shortcut); closeModal(); });
-                attachDeleteEvents(div, shortcut);
-                container.appendChild(div);
-            }
-        }
-
-        function addCustomEmoticon() {
-            const shortcut = document.getElementById('newShortcut').value.trim();
-            const file = document.getElementById('imageUpload').files[0];
-            if (!shortcut) { alert('Digite um atalho'); return; }
-            if (!file) { alert('Selecione uma imagem'); return; }
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                emoticonMap.set(shortcut, { imageUrl: e.target.result, nome: shortcut, tipo: 'custom' });
-                saveCustomEmoticons();
-                renderEmoticonsList();
-                document.getElementById('newShortcut').value = '';
-                document.getElementById('imageUpload').value = '';
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function resetDefaults() {
-            if (confirm('Restaurar emoticons padrão?\nTodos os emoticons personalizados serão removidos permanentemente.')) {
-                emoticonMap.clear(); loadDefaults(); saveCustomEmoticons(); renderEmoticonsList();
-            }
-        }
-
-        function clearChat() {
-            document.getElementById('messagesContainer').innerHTML = '';
-            addWelcomeMessage();
-        }
-
+        // ========== MODAIS ==========
         const modalOverlay = document.getElementById('modalOverlay');
         const modalTitle = document.getElementById('modalTitle');
         const modalContent = document.getElementById('modalContent');
-        const modalCloseBtn = document.getElementById('modalCloseBtn');
-
-        function openModal(title, contentHtml) {
-            modalTitle.textContent = title;
-            modalContent.innerHTML = contentHtml;
-            modalOverlay.classList.add('active');
-            if (title.includes('Emoticons')) {
-                renderEmoticonsList();
-                document.getElementById('resetDefaultsBtn')?.addEventListener('click', resetDefaults);
-            }
-            if (title.includes('Novo')) {
-                document.getElementById('addEmoticonBtn')?.addEventListener('click', addCustomEmoticon);
-            }
+        const modalClose = document.getElementById('modalCloseBtn');
+        function openModal(title, html){
+            modalTitle.textContent = title; modalContent.innerHTML = html; modalOverlay.classList.add('active');
+            if(title.includes('Emoticons')){ renderEmoticonsList(); document.getElementById('resetDefaultsBtn')?.addEventListener('click', resetDefaults); }
+            if(title.includes('Novo')){ document.getElementById('addEmoticonBtn')?.addEventListener('click', addCustomEmoticon); }
         }
+        function closeModal(){ modalOverlay.classList.remove('active'); }
+        modalClose.addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', e=>{ if(e.target===modalOverlay) closeModal(); });
 
-        function closeModal() {
-            modalOverlay.classList.remove('active');
-        }
-
-        modalCloseBtn.addEventListener('click', closeModal);
-        modalOverlay.addEventListener('click', (e) => {
-            if (e.target === modalOverlay) closeModal();
-        });
-
-        const emoticonsModalHtml = `
-            <div class="panel-section">
-                <div id="emoticonsList" class="emoticons-list"></div>
-                <div class="info-text">✨ Toque para inserir · Segure para excluir</div>
-                <button id="resetDefaultsBtn" class="btn-warning" style="width:100%; margin-top:8px;">↺ Restaurar Padrões</button>
-            </div>
-        `;
-        const newEmoticonModalHtml = `
-            <div class="panel-section">
-                <h3 style="margin:0 0 10px 0;">➕ Criar emoticon</h3>
-                <div class="add-emoticon">
-                    <input type="text" id="newShortcut" placeholder="Atalho (:star)">
-                    <input type="file" id="imageUpload" accept="image/*">
-                    <label for="imageUpload" class="file-label">📁 Escolher imagem</label>
-                    <button id="addEmoticonBtn">✅ Adicionar</button>
-                </div>
-                <div class="info-text">Imagem pequena, sem espaços laterais.</div>
-            </div>
-        `;
-        const friendsModalHtml = `
-            <div class="panel-section">
-                <h3 style="margin:0 0 10px 0;">👥 Lista de amigos</h3>
-                <div class="friends-list">Nenhum amigo online no momento.</div>
-            </div>
-        `;
-
-        const inputArea = document.getElementById('inputArea');
-        const tabs = document.querySelectorAll('.tab-btn');
-        const tabContents = {
-            text: document.getElementById('tab-text'),
-            draw: document.getElementById('tab-draw')
-        };
-
-        function setDrawExpanded(expanded) {
-            if (expanded) {
-                inputArea.classList.add('draw-expanded');
-            } else {
-                inputArea.classList.remove('draw-expanded');
+        function renderEmoticonsList(){
+            const c=document.getElementById('emoticonsList'); if(!c) return;
+            c.innerHTML='';
+            if(emoticonMap.size===0){ c.innerHTML='<div style="padding:10px;color:#888;">Nenhum</div>'; return; }
+            for(let [s,d] of emoticonMap){
+                const div=document.createElement('div'); div.className='emoticon-item';
+                div.innerHTML=`<img src="${d.imageUrl}" class="emoticon-img-preview"><span class="emoticon-shortcut">${s}</span>`;
+                div.addEventListener('click', ()=>{ insertAtCursor(s); closeModal(); });
+                c.appendChild(div);
             }
         }
+        function addCustomEmoticon(){
+            const shortcut=document.getElementById('newShortcut').value.trim();
+            const file=document.getElementById('imageUpload').files[0];
+            if(!shortcut||!file){ alert('Preencha atalho e imagem'); return; }
+            const reader=new FileReader();
+            reader.onload=e=>{ emoticonMap.set(shortcut,{imageUrl:e.target.result, nome:shortcut, tipo:'custom'}); saveCustomEmoticons(); renderEmoticonsList(); };
+            reader.readAsDataURL(file);
+        }
+        function resetDefaults(){ if(confirm('Restaurar padrões?')){ emoticonMap.clear(); loadDefaults(); saveCustomEmoticons(); renderEmoticonsList(); } }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadDefaults(); loadCustomEmoticons(); loadEditorContent(); loadToolbarSettings();
-            addWelcomeMessage();
+        // Modal de usuários online
+        function showOnlineUsersModal(){
+            const listHtml = onlineUsers.length ? onlineUsers.map(u=>`<div class="online-user-item">👤 ${escapeHtml(u)}</div>`).join('') : '<div style="padding:10px;">Nenhum usuário online</div>';
+            openModal('👥 Usuários online', `<div class="panel-section">${listHtml}</div>`);
+        }
 
-            const editor = document.getElementById('messageInput');
+        // ========== INICIALIZAÇÃO ==========
+        document.addEventListener('DOMContentLoaded', ()=>{
+            loadDefaults(); loadCustomEmoticons();
+            const editor=document.getElementById('messageInput');
             editor.addEventListener('input', saveEditorContent);
             editor.addEventListener('blur', saveEditorContent);
-            function updatePlaceholder() {
-                if (!editor.innerHTML.trim() || editor.innerHTML === '<br>') editor.innerHTML = '';
-            }
-            editor.addEventListener('keyup', updatePlaceholder);
-            editor.addEventListener('paste', () => setTimeout(updatePlaceholder, 10));
+            document.querySelectorAll('.format-btn[data-cmd]').forEach(b=>b.addEventListener('click',()=>applyFormat(b.dataset.cmd)));
+            document.getElementById('fontColorPicker').addEventListener('input',e=>{applyFormat('foreColor',e.target.value); saveToolbarSettings();});
+            document.getElementById('fontFamilySelect').addEventListener('change',e=>{applyFormat('fontName',e.target.value); saveToolbarSettings();});
+            document.getElementById('resetFormatBtn').addEventListener('click',()=>{editor.innerHTML=''; saveEditorContent();});
 
-            document.querySelectorAll('.format-btn[data-cmd]').forEach(btn => btn.addEventListener('click', () => applyFormat(btn.getAttribute('data-cmd'))));
-            document.getElementById('fontColorPicker').addEventListener('input', (e) => { applyFormat('foreColor', e.target.value); saveToolbarSettings(); });
-            document.getElementById('fontFamilySelect').addEventListener('change', (e) => { applyFormat('fontName', e.target.value); saveToolbarSettings(); });
-            document.getElementById('resetFormatBtn').addEventListener('click', () => { editor.innerHTML = ''; saveEditorContent(); });
-
-            tabs.forEach(btn => btn.addEventListener('click', () => {
-                const tab = btn.dataset.tab;
-                tabs.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                Object.values(tabContents).forEach(c => c.classList.remove('active'));
-                tabContents[tab].classList.add('active');
-
-                if (tab === 'draw') {
-                    setDrawExpanded(true);
-                    setTimeout(() => resizeCanvas(), 30);
-                } else {
-                    setDrawExpanded(false);
-                    editor.focus();
-                }
+            const tabs=document.querySelectorAll('.tab-btn');
+            const tabContents={ text:document.getElementById('tab-text'), draw:document.getElementById('tab-draw') };
+            tabs.forEach(b=>b.addEventListener('click',()=>{
+                const tab=b.dataset.tab;
+                tabs.forEach(t=>t.classList.remove('active')); b.classList.add('active');
+                Object.values(tabContents).forEach(c=>c.classList.remove('active')); tabContents[tab].classList.add('active');
+                if(tab==='draw'){ document.getElementById('inputArea').classList.add('draw-expanded'); setTimeout(resizeCanvas,30); }
+                else { document.getElementById('inputArea').classList.remove('draw-expanded'); editor.focus(); }
             }));
 
             document.getElementById('sendBtn').addEventListener('click', sendMessage);
             document.getElementById('sendDrawingBtn').addEventListener('click', sendDrawing);
             document.getElementById('clearChatHeaderBtn').addEventListener('click', clearChat);
+            document.getElementById('showEmoticonsBtn').addEventListener('click', ()=>openModal('😊 Emoticons', `<div class="panel-section"><div id="emoticonsList" class="emoticons-list"></div><div class="info-text">✨ Toque para inserir</div><button id="resetDefaultsBtn" class="btn-warning" style="width:100%; margin-top:8px;">↺ Restaurar Padrões</button></div>`));
+            document.getElementById('showNewEmoticonBtn').addEventListener('click', ()=>openModal('➕ Novo Emoticon', `<div class="panel-section"><h3>Criar emoticon</h3><div class="add-emoticon"><input id="newShortcut" placeholder="Atalho (:star)"><input type="file" id="imageUpload" accept="image/*"><label for="imageUpload" class="file-label">📁 Escolher imagem</label><button id="addEmoticonBtn">✅ Adicionar</button></div></div>`));
+            document.getElementById('showOnlineBtn').addEventListener('click', showOnlineUsersModal);
 
-            document.getElementById('showEmoticonsBtn').addEventListener('click', () => openModal('😊 Emoticons', emoticonsModalHtml));
-            document.getElementById('showNewEmoticonBtn').addEventListener('click', () => openModal('➕ Novo Emoticon', newEmoticonModalHtml));
-            document.getElementById('showFriendsBtn').addEventListener('click', () => openModal('👥 Amigos', friendsModalHtml));
-
-            editor.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
-
-            setTimeout(() => { if (tabContents.draw.classList.contains('active')) resizeCanvas(); }, 50);
+            editor.addEventListener('keydown', e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendMessage(); } });
+            setTimeout(()=>{ if(tabContents.draw.classList.contains('active')) resizeCanvas(); }, 50);
         });
     })();
 </script>
